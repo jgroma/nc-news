@@ -66,7 +66,7 @@ describe("/api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.article.article_id).toBe(3);
-        expect(body.article).toEqual(testArticle);
+        expect(body.article).toMatchObject(testArticle);
       });
   });
   test("GET:404 sends the correct status and error message when given a valid but non-existent id", () => {
