@@ -46,3 +46,43 @@ describe("GET /api", () => {
       });
   });
 });
+
+describe("/api/articles/:article_id", () => {
+  test("GET: 200 responds with an article object containing the right properties", () => {
+    const testArticle = {
+      article_id: 3,
+      title: "Eight pug gifs that remind me of mitch",
+      topic: "mitch",
+      author: "icellusedkars",
+      body: "some gifs",
+      created_at: new Date(1604394720000).toISOString(),
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      votes: 0,
+    };
+
+    return request(app)
+      .get("/api/articles/3")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.article_id).toBe(3);
+        expect(body.article).toEqual(testArticle);
+      });
+  });
+  test("GET:404 sends the correct status and error message when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/100")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Article does not exist");
+      });
+  });
+  test("GET: 400 sends the correct status and error message when given an invalid id", () => {
+    return request(app)
+      .get("/api/articles/not-an-article-id")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
+});
