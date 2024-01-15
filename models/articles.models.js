@@ -28,7 +28,6 @@ exports.fetchArticles = () => {
   ORDER BY articles.created_at DESC;`
     )
     .then(({ rows }) => {
-      console.log(rows, "rows in model");
       return rows;
     });
 };
