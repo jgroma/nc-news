@@ -113,3 +113,47 @@ describe("/api/articles", () => {
       });
   });
 });
+
+describe("/api/articles/:article_id/comments", () => {
+  test("GET: 200 responds with an array of all comments for a given article. the comment objects contain correct properties ", () => {
+    return request(app)
+      .get("/api/articles/9/comments")
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(2);
+        expect(body.comments).toBeSortedBy("created_at", { descending: true });
+
+        body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.article_id).toBe("number");
+        });
+      });
+  });
+  test("GET: 404 sends the correct status and error message message when given a valid but non-existend article_id", () => {
+    return request(app)
+      .get("/api/articles/100/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Article does not exist");
+      });
+  });
+  test("GET: 400 sends the correct status and error message when given an invalid article_id", () => {
+    return request(app)
+      .get("/api/articles/not-an-article-id/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
+  test("GET: 200 responds with an empty array when the given article has no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
+});
