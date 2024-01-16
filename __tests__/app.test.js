@@ -324,3 +324,13 @@ describe("PATCH api/articles/:article_id", () => {
       });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  test("DELETE 204 deletes a comment of a given comment_id and responds with no content", () => {
+    return request(app).delete("/api/comments/4").expect(204);
+  });
+});
+
+//delete errors
+//comment_id is non-existent but valid (404) (Comment does not exist)
+//comment_id is invalid (400) (Bad request)
