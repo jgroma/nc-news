@@ -12,6 +12,7 @@ const {
   getArticles,
   getArticleComments,
   postArticleCommment,
+  patchArticleById,
 } = require("./controllers/articles.controllers");
 //require controllers
 //require error handlers
@@ -30,6 +31,8 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getArticleComments);
 
 app.post("/api/articles/:article_id/comments", postArticleCommment);
+
+app.patch("/api/articles/:article_id", patchArticleById);
 
 //handle any invalid path
 app.all("*", invalidPathHandler);

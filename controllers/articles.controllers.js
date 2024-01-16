@@ -3,6 +3,7 @@ const {
   fetchArticles,
   fetchArticleComments,
   insertArticleComment,
+  updateArticleById,
 } = require("../models/articles.models");
 const { checkArticleExists } = require("../utils/check-exists");
 
@@ -58,6 +59,22 @@ exports.postArticleCommment = (req, res, next) => {
     .then((response) => {
       const comment = response[0];
       res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+  const articleExistenceQuery = checkArticleExists(article_id);
+  const updateArticleByIdQuery = updateArticleById(article_id, inc_votes);
+
+  Promise.all([updateArticleByIdQuery, articleExistenceQuery])
+    .then((response) => {
+      const article = response[0];
+      res.status(200).send({ article });
     })
     .catch((err) => {
       next(err);
