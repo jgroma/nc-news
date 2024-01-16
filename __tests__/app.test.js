@@ -156,4 +156,26 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.comments).toEqual([]);
       });
   });
+
+  describe("POST", () => {
+    test("POST: 201 inserts a new comment for the given article and returns it as a response to the client", () => {
+      const newComment = {
+        username: "lurker",
+        body: "I don't know about you, but I am a fan of lurking.",
+      };
+
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment).toMatchObject({
+            author: "lurker",
+            body: "I don't know about you, but I am a fan of lurking.",
+            comment_id: 19,
+            article_id: 2,
+          });
+        });
+    });
+  });
 });

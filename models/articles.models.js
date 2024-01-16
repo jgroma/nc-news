@@ -44,3 +44,23 @@ exports.fetchArticleComments = (article_id) => {
       return rows;
     });
 };
+
+exports.insertArticleComment = (username, body, article_id) => {
+  console.log("gets in the model??");
+  console.log(username, body, article_id, "params in model");
+  return db
+    .query(
+      `
+  INSERT INTO comments
+  (author, body, article_id)
+  VALUES 
+  ($1, $2, $3) 
+  RETURNING *;
+  `,
+      [username, body, article_id]
+    )
+    .then(({ rows }) => {
+      console.log(rows, "rows in model");
+      return rows[0];
+    });
+};
