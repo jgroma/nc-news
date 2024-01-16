@@ -235,3 +235,55 @@ describe("/api/articles/:article_id/comments", () => {
     });
   });
 });
+
+describe("PATCH api/articles/:article_id", () => {
+  test("PATCH: 200 updates an article with given article_id and responds with an updated article to the client (increments votes if positive number)", () => {
+    const changeVotesBy = {
+      inc_votes: 5,
+    };
+
+    const updatedArticle = {
+      article_id: 3,
+      title: "Eight pug gifs that remind me of mitch",
+      topic: "mitch",
+      author: "icellusedkars",
+      body: "some gifs",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      votes: 5,
+    };
+
+    return request(app)
+      .patch("/api/articles/3")
+      .send(changeVotesBy)
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body.article, "article");
+        expect(body.article).toMatchObject(updatedArticle);
+      });
+  });
+  test("PATCH: 200 updates an article with given article_id and responds with an updated article to the client (decrements votes if negative number)", () => {
+    const changeVotesBy = {
+      inc_votes: -20,
+    };
+
+    const updatedArticle = {
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      votes: 80,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(changeVotesBy)
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body.article, "article");
+        expect(body.article).toMatchObject(updatedArticle);
+      });
+  });
+});
