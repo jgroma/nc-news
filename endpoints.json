@@ -62,5 +62,18 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:articles_id/comments": {
+    "description": "posts a new comment and returns it to the client",
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 19,
+        "body": "I don't know about you, but I am a fan of lurking.",
+        "article_id": 2,
+        "author": "lurker",
+        "votes": 0,
+        "created_at": "2024-01-16T13:35:33.990Z"
+      }
+    }
   }
 }

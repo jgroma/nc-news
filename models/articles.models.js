@@ -46,8 +46,6 @@ exports.fetchArticleComments = (article_id) => {
 };
 
 exports.insertArticleComment = (username, body, article_id) => {
-  console.log("gets in the model??");
-  console.log(username, body, article_id, "params in model");
   return db
     .query(
       `
@@ -60,7 +58,6 @@ exports.insertArticleComment = (username, body, article_id) => {
       [username, body, article_id]
     )
     .then(({ rows }) => {
-      console.log(rows, "rows in model");
       return rows[0];
     });
 };

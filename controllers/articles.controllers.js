@@ -44,22 +44,22 @@ exports.getArticleComments = (req, res, next) => {
 };
 
 exports.postArticleCommment = (req, res, next) => {
-  console.log("gets in the controller??");
-  //insertArticleComment();
   const { article_id } = req.params;
   const { username, body } = req.body;
-  console.log(req.body, "req.body in cont");
-  insertArticleComment(username, body, article_id)
-    .then((comment) => {
-      console.log(comment, "comment after model inv");
+
+  const articleExistenceQuery = checkArticleExists(article_id);
+  const insertArticleCommentQuery = insertArticleComment(
+    username,
+    body,
+    article_id
+  );
+
+  Promise.all([insertArticleCommentQuery, articleExistenceQuery])
+    .then((response) => {
+      const comment = response[0];
       res.status(201).send({ comment });
     })
     .catch((err) => {
-      console.log(err, "err in controller"); //code "42601" syntax error
-
       next(err);
     });
 };
-
-//code: '23502',
-//detail: 'Failing row contains (19, null, null, null, 0, 2024-01-16 12:05:52.158637).'
