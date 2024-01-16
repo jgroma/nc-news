@@ -10,6 +10,7 @@ const { getEndpoints } = require("./controllers/endpoints.controllers");
 const {
   getArticleById,
   getArticles,
+  getArticleComments,
 } = require("./controllers/articles.controllers");
 //require controllers
 //require error handlers
@@ -24,6 +25,8 @@ app.get("/api", getEndpoints);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles", getArticles);
+
+app.get("/api/articles/:article_id/comments", getArticleComments);
 
 //handle any invalid path
 app.all("*", invalidPathHandler);

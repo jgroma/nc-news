@@ -1,7 +1,9 @@
 const {
   fetchArticleById,
   fetchArticles,
+  fetchArticleComments,
 } = require("../models/articles.models");
+const { checkArticleExists } = require("../utils/check-exists");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -15,7 +17,27 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  fetchArticles().then((articles) => {
-    res.status(200).send({ articles });
-  });
+  fetchArticles()
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getArticleComments = (req, res, next) => {
+  const { article_id } = req.params;
+
+  const articleExistenceQuery = checkArticleExists(article_id);
+  const fetchCommentsQuery = fetchArticleComments(article_id);
+
+  Promise.all([fetchCommentsQuery, articleExistenceQuery])
+    .then((response) => {
+      const comments = response[0];
+      res.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
