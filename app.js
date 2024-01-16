@@ -15,6 +15,7 @@ const {
   patchArticleById,
 } = require("./controllers/articles.controllers");
 const { deleteCommentById } = require("./controllers/comments.controllers");
+const { getUsers } = require("./controllers/users.controllers");
 //require controllers
 //require error handlers
 const app = express();
@@ -36,6 +37,8 @@ app.post("/api/articles/:article_id/comments", postArticleCommment);
 app.patch("/api/articles/:article_id", patchArticleById);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
+
+app.get("/api/users", getUsers);
 
 //handle any invalid path
 app.all("*", invalidPathHandler);
