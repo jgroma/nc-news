@@ -258,7 +258,6 @@ describe("PATCH api/articles/:article_id", () => {
       .send(changeVotesBy)
       .expect(200)
       .then(({ body }) => {
-        console.log(body.article, "article");
         expect(body.article).toMatchObject(updatedArticle);
       });
   });
@@ -282,8 +281,46 @@ describe("PATCH api/articles/:article_id", () => {
       .send(changeVotesBy)
       .expect(200)
       .then(({ body }) => {
-        console.log(body.article, "article");
         expect(body.article).toMatchObject(updatedArticle);
+      });
+  });
+  test("PATCH: 400 sends a correct status and error message when user sends an invalid inc_votes property", () => {
+    const badChangeVotesBy = {
+      inc_votes: "banana",
+    };
+
+    return request(app)
+      .patch("/api/articles/5")
+      .send(badChangeVotesBy)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
+  test("PATCH: 404 sends a correct status and error message given a valid but non-existent article_id", () => {
+    const changeVotesBy = {
+      inc_votes: 13,
+    };
+
+    return request(app)
+      .patch("/api/articles/777")
+      .send(changeVotesBy)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Article does not exist");
+      });
+  });
+  test("PATCH: 400 sends a correct status and error message given an invalid article_id", () => {
+    const changeVotesBy = {
+      inc_votes: 11,
+    };
+
+    return request(app)
+      .patch("/api/articles/not-an-article_id")
+      .send(changeVotesBy)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
       });
   });
 });

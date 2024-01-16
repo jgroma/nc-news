@@ -68,8 +68,12 @@ exports.postArticleCommment = (req, res, next) => {
 exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
-  updateArticleById(article_id, inc_votes)
-    .then((article) => {
+  const articleExistenceQuery = checkArticleExists(article_id);
+  const updateArticleByIdQuery = updateArticleById(article_id, inc_votes);
+
+  Promise.all([updateArticleByIdQuery, articleExistenceQuery])
+    .then((response) => {
+      const article = response[0];
       res.status(200).send({ article });
     })
     .catch((err) => {
