@@ -329,8 +329,20 @@ describe("/api/comments/:comment_id", () => {
   test("DELETE 204 deletes a comment of a given comment_id and responds with no content", () => {
     return request(app).delete("/api/comments/4").expect(204);
   });
+  test("DELETE 404 sends a correct status and error message given a valid but non-existent comment_id", () => {
+    return request(app)
+      .delete("/api/comments/7899")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Comment does not exist");
+      });
+  });
+  test("DELETE 400 sends a correct status and error message given an invalid comment_id", () => {
+    return request(app)
+      .delete("/api/comments/not-a-comment_id")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
 });
-
-//delete errors
-//comment_id is non-existent but valid (404) (Comment does not exist)
-//comment_id is invalid (400) (Bad request)
