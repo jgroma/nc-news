@@ -384,8 +384,20 @@ describe("/api/articles?topic=", () => {
         });
       });
   });
+  test("GET: 200 responds with an empty array given a topic with no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      });
+  });
+  test("GET: 404 responds with a correct status and error message if topic query does not exist in the database", () => {
+    return request(app)
+      .get("/api/articles?topic=not-a-topic")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Topic does not exist");
+      });
+  });
 });
-
-//valid empty response - 200 - if topic is not used in any article
-//error handling topic query
-//if topic doesn't exist
