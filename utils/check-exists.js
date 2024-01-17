@@ -19,3 +19,20 @@ exports.checkArticleExists = (article_id) => {
       //else do nothing (article exists)
     });
 };
+
+exports.checkTopicExists = (topic) => {
+  return db
+    .query(
+      `
+    SELECT * FROM topics
+    WHERE slug = $1
+  `,
+      [topic]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, message: "Topic does not exist" });
+      }
+      //else do nothing (topic exists)
+    });
+};
