@@ -401,3 +401,26 @@ describe("/api/articles?topic=", () => {
       });
   });
 });
+
+describe("/api/articles/:article_id(comment_count)", () => {
+  test("GET: 200 responds with an article object of given article_id that has a comment_count property", () => {
+    const testArticle = {
+      title: "UNCOVERED: catspiracy to bring down democracy",
+      topic: "cats",
+      author: "rogersop",
+      body: "Bastet walks amongst us, and the cats are taking arms!",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+
+    return request(app)
+      .get("/api/articles/5")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.comment_count).toBe(2);
+        expect(typeof body.article.created_at).toBe("string");
+        expect(typeof body.article.comment_count).toBe("number");
+        expect(body.article).toMatchObject(testArticle);
+      });
+  });
+});
