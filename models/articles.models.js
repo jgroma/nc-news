@@ -106,4 +106,40 @@ exports.updateArticleById = (article_id, newVotes) => {
     });
 };
 
-//SELECT articles.*, CAST(COUNT(comment_id) AS INTEGER) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = 5 GROUP BY articles.article_id;
+exports.insertArticle = (
+  author,
+  title,
+  body,
+  topic,
+  article_img_url = "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+) => {
+  //console.log("in model");
+  return db
+    .query(
+      `
+    INSERT INTO articles
+    (author, title, body, topic, article_img_url)
+    VALUES
+    ($1, $2, $3, $4, $5)
+    RETURNING *;
+  `,
+      [author, title, body, topic, article_img_url]
+    )
+    .then(({ rows }) => {
+      console.log(rows, "rows before 2nd query");
+      const insertedArticle = rows[0];
+      const { article_id } = insertedArticle;
+
+      return db.query(
+        `SELECT articles.*, CAST(COUNT(comment_id) AS INTEGER) AS comment_count 
+        FROM articles 
+        LEFT JOIN comments ON articles.article_id = comments.article_id 
+        WHERE articles.article_id = $1
+        GROUP BY articles.article_id;`,
+        [article_id]
+      );
+    })
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
