@@ -424,3 +424,34 @@ describe("/api/articles/:article_id(comment_count)", () => {
       });
   });
 });
+
+describe("/api/articles (sorting queries)", () => {
+  test("GET: 200 responds with an array of article objects sorted by created_at property by default if no sort_by query included", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+        expect(body.articles.length).toBe(13);
+      });
+  });
+  test("GET: 200 responds with an array of article objects sorted by the property given in sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("title", { descending: true });
+        expect(body.articles.length).toBe(13);
+      });
+  });
+  test("GET: 400 sends a correct status and error message if given invalid sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=not_a_sort_query")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid sort_by query");
+      });
+  });
+});
+
+//error handling - invalid sorting queries
