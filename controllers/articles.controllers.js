@@ -4,10 +4,12 @@ const {
   fetchArticleComments,
   insertArticleComment,
   updateArticleById,
+  insertArticle,
 } = require("../models/articles.models");
 const {
   checkArticleExists,
   checkTopicExists,
+  checkUserExists,
 } = require("../utils/check-exists");
 
 exports.getArticleById = (req, res, next) => {
@@ -89,6 +91,29 @@ exports.patchArticleById = (req, res, next) => {
     .then((response) => {
       const article = response[0];
       res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postArticle = (req, res, next) => {
+  const { author, title, body, topic, article_img_url } = req.body;
+
+  const authorExistenceQuery = checkUserExists(author);
+  const topicExistenceQuery = checkTopicExists(topic);
+
+  const insertArticleQuery = insertArticle(
+    author,
+    title,
+    body,
+    topic,
+    article_img_url
+  );
+  Promise.all([insertArticleQuery, authorExistenceQuery, topicExistenceQuery])
+    .then((response) => {
+      const article = response[0];
+      res.status(201).send({ article });
     })
     .catch((err) => {
       next(err);

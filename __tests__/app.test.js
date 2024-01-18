@@ -591,3 +591,100 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("POST /api/articles", () => {
+  test("POST: 201 inserts a new article and returns it as a response to the client", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "Love letter to pancakes",
+      body: "Pancakes are the best breakfast food. Pancakes are my past, present, future.",
+      topic: "mitch",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body }) => {
+        console.log(body, "test body");
+        expect(body.article).toMatchObject(newArticle);
+        expect(typeof body.article.article_id).toBe("number");
+        expect(typeof body.article.created_at).toBe("string");
+        expect(body.article.votes).toBe(0);
+        expect(body.article.comment_count).toBe(0);
+      });
+  });
+  test("POST: 201 article_img_url will default if omitted", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "Love letter to pancakes",
+      body: "Pancakes are the best breakfast food. Pancakes are my past, present, future.",
+      topic: "mitch",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body }) => {
+        console.log(body, "test body");
+        expect(body.article).toMatchObject(newArticle);
+        expect(body.article.article_img_url).toBe(
+          "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+        );
+        expect(typeof body.article.article_id).toBe("number");
+        expect(typeof body.article.created_at).toBe("string");
+        expect(body.article.votes).toBe(0);
+        expect(body.article.comment_count).toBe(0);
+      });
+  });
+  test("POST: 400 sends a correct status and error message when provided with a bad article (missing properties)", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "Love letter to pancakes",
+      topic: "mitch",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
+  test("POST: 404 sends a correct status and error message when author does not exist in the database", () => {
+    const newArticle = {
+      author: "iDontExist",
+      title: "Love letter to pancakes",
+      body: "Pancakes are the best breakfast food. Pancakes are my past, present, future.",
+      topic: "mitch",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("User does not exist");
+      });
+  });
+  test("POST: 404 sends a correct status and error message when topic does not exist in the database", () => {
+    const newArticle = {
+      author: "lurker",
+      title: "Love letter to pancakes",
+      body: "Pancakes are the best breakfast food. Pancakes are my past, present, future.",
+      topic: "iDontExist",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Topic does not exist");
+      });
+  });
+});
