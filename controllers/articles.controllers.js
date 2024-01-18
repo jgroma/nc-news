@@ -22,8 +22,8 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by, topic } = req.query;
-  const fetchArticlesQuery = fetchArticles(sort_by, topic);
+  const { sort_by, order, topic } = req.query;
+  const fetchArticlesQuery = fetchArticles(sort_by, order, topic);
   const queries = [fetchArticlesQuery];
 
   //fetchArticles(topic)

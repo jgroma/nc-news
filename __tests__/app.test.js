@@ -452,6 +452,30 @@ describe("/api/articles (sorting queries)", () => {
         expect(body.message).toBe("Invalid sort_by query");
       });
   });
+  test("GET: 200 responds with an array of objects ordered in descending order by default", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("article_id", { descending: true });
+        expect(body.articles.length).toBe(13);
+      });
+  });
+  test("GET: 200 responds with an array of objects ordered in ascending order if given order query=asc", () => {
+    return request(app)
+      .get("/api/articles?order=asc&sort_by=title")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("title", { descending: false });
+        expect(body.articles.length).toBe(13);
+      });
+  });
+  test("GET: 400 sends a correct status and error message when given an invalid order query", () => {
+    return request(app)
+      .get("/api/articles?order=not-an-order-query")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid order query");
+      });
+  });
 });
-
-//error handling - invalid sorting queries
