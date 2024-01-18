@@ -25,7 +25,7 @@
       ]
     }
   },
-  "GET /api/:articles_id": {
+  "GET /api/articles/:article_id": {
     "description": "return a single article object with given id",
     "exampleResponse": {
       "article": {
@@ -41,7 +41,7 @@
       }
     }
   },
-  "GET /api/articles/:articles_id/comments": {
+  "GET /api/articles/:article_id/comments": {
     "description": "returns an array of comments for a given article",
     "exampleResponse": {
       "commments": [
@@ -64,7 +64,7 @@
       ]
     }
   },
-  "POST /api/articles/:articles_id/comments": {
+  "POST /api/articles/:article_id/comments": {
     "description": "posts a new comment and returns it to the client",
     "exampleResponse": {
       "comment": {
@@ -77,7 +77,7 @@
       }
     }
   },
-  "PATCH /api/articles/:articles_id": {
+  "PATCH /api/articles/:article_id": {
     "description": "increments/decrements the vote property of a specific article and returns the updated article to the client",
     "exampleResponse": {
       "article": {
