@@ -1,44 +1,18 @@
 const express = require("express");
-const { getTopics } = require("./controllers/topics.controllers");
+
 const {
   invalidPathHandler,
   serverErrorHandler,
   customErrorHandler,
   psqlErrorHandler,
 } = require("./controllers/errors.controllers");
-const { getEndpoints } = require("./controllers/endpoints.controllers");
-const {
-  getArticleById,
-  getArticles,
-  getArticleComments,
-  postArticleCommment,
-  patchArticleById,
-} = require("./controllers/articles.controllers");
-const { deleteCommentById } = require("./controllers/comments.controllers");
-const { getUsers } = require("./controllers/users.controllers");
-//require controllers
-//require error handlers
+const apiRouter = require("./routes/api-router");
+
 const app = express();
 
 app.use(express.json());
 
-app.get("/api/topics", getTopics);
-
-app.get("/api", getEndpoints);
-
-app.get("/api/articles/:article_id", getArticleById);
-
-app.get("/api/articles", getArticles);
-
-app.get("/api/articles/:article_id/comments", getArticleComments);
-
-app.post("/api/articles/:article_id/comments", postArticleCommment);
-
-app.patch("/api/articles/:article_id", patchArticleById);
-
-app.delete("/api/comments/:comment_id", deleteCommentById);
-
-app.get("/api/users", getUsers);
+app.use("/api", apiRouter);
 
 //handle any invalid path
 app.all("*", invalidPathHandler);
