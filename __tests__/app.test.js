@@ -479,3 +479,34 @@ describe("/api/articles (sorting queries)", () => {
       });
   });
 });
+
+describe("/api/users/:username", () => {
+  test("GET: 200 responds with a user object of given username", () => {
+    const testUser = {
+      username: "butter_bridge",
+      name: "jonny",
+      avatar_url:
+        "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+    };
+
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toMatchObject(testUser);
+        expect(typeof body.user.username).toBe("string");
+        expect(typeof body.user.name).toBe("string");
+        expect(typeof body.user.avatar_url).toBe("string");
+      });
+  });
+  test("GET: 404 sends a correct status and error message when given a non-existent username", () => {
+    return request(app)
+      .get("/api/users/not-an-username")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Username does not exist");
+      });
+  });
+});
+
+//error handling - 404 when username does not exist
