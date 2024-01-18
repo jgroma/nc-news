@@ -509,4 +509,85 @@ describe("/api/users/:username", () => {
   });
 });
 
-//error handling - 404 when username does not exist
+describe("PATCH /api/comments/:comment_id", () => {
+  test("PATCH: 200 updates a comment with given comment_id and responds with updated comment (increments votes if positive number)", () => {
+    const changeVotesBy = {
+      inc_votes: 2,
+    };
+
+    const updatedComment = {
+      body: "I hate streaming noses",
+      votes: 2,
+      author: "icellusedkars",
+      article_id: 1,
+      created_at: expect.any(String),
+    };
+
+    return request(app)
+      .patch("/api/comments/5")
+      .send(changeVotesBy)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject(updatedComment);
+      });
+  });
+  test("PATCH: 200 updates a comment with given comment_id and responds with updated comment (decrements votes if negative number)", () => {
+    const changeVotesBy = {
+      inc_votes: -3,
+    };
+
+    const updatedComment = {
+      body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+      votes: 13,
+      author: "butter_bridge",
+      article_id: 9,
+      created_at: expect.any(String),
+    };
+
+    return request(app)
+      .patch("/api/comments/1")
+      .send(changeVotesBy)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject(updatedComment);
+      });
+  });
+  test("PATCH: 400 sends a correct status and error message when given an invalid inc_votes property", () => {
+    const changeVotesBy = {
+      inc_votes: "not-a-number",
+    };
+    return request(app)
+      .patch("/api/comments/2")
+      .send(changeVotesBy)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
+  test("PATCH: 404 sends a correct status and error message when given a valid but non-existent comment_id", () => {
+    const changeVotesBy = {
+      inc_votes: -3,
+    };
+
+    return request(app)
+      .patch("/api/comments/9999")
+      .send(changeVotesBy)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Comment does not exist");
+      });
+  });
+  test("PATCH: 400 sends a correct status and error message when given an invalid comment_id", () => {
+    const changeVotesBy = {
+      inc_votes: -3,
+    };
+
+    return request(app)
+      .patch("/api/comments/not-a-comment_id")
+      .send(changeVotesBy)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
+});

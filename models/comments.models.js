@@ -19,3 +19,19 @@ exports.removeCommentById = (comment_id) => {
       }
     });
 };
+
+exports.updateCommentById = (comment_id, newVotes) => {
+  return db
+    .query(
+      `
+  UPDATE comments
+  SET votes = votes + $2
+  WHERE comment_id = $1
+  RETURNING *
+  `,
+      [comment_id, newVotes]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
