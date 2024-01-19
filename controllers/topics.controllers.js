@@ -23,7 +23,6 @@ exports.postTopics = (req, res, next) => {
       res.status(201).send({ topic });
     })
     .catch((err) => {
-      console.log(err.code, "err code");
       next(err);
     });
 };

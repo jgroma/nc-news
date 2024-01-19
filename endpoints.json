@@ -198,5 +198,8 @@
         "description": "All about dogs"
       }
     }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "removes article with given article_id and its comments, and sends no response to the client"
   }
 }

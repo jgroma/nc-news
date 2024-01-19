@@ -6,8 +6,6 @@ exports.selectTopics = () => {
 };
 
 exports.insertTopics = (slug, description) => {
-  console.log("hi in model");
-
   return db
     .query(
       `
