@@ -54,9 +54,10 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
+  const { limit, p } = req.query;
 
   const articleExistenceQuery = checkArticleExists(article_id);
-  const fetchCommentsQuery = fetchArticleComments(article_id);
+  const fetchCommentsQuery = fetchArticleComments(article_id, limit, p);
 
   Promise.all([fetchCommentsQuery, articleExistenceQuery])
     .then((response) => {

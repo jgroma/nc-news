@@ -49,7 +49,12 @@
     }
   },
   "GET /api/articles/:article_id/comments": {
-    "description": "returns an array of comments for a given article",
+    "description": "returns an array of comments for a given article, sorted in desc order by created_at",
+    "queries": ["limit", "p"],
+    "queries_description": {
+      "limit": "(pagination) limits the size of the array, defaults to 10",
+      "p": "specifies at which page to start, defaults to first page"
+    },
     "exampleResponse": {
       "commments": [
         {
