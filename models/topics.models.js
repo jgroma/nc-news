@@ -1,8 +1,25 @@
 const db = require("../db/connection");
 exports.selectTopics = () => {
-  //console.log("hi, model here");
   return db.query(`SELECT * FROM topics`).then(({ rows }) => {
-    //console.log(rows, "rows in model");
     return rows;
   });
+};
+
+exports.insertTopics = (slug, description) => {
+  console.log("hi in model");
+
+  return db
+    .query(
+      `
+    INSERT INTO topics
+    (slug, description)
+    VALUES
+    ($1, $2)
+    RETURNING *;
+    `,
+      [slug, description]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
 };

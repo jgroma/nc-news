@@ -770,3 +770,50 @@ describe("/api/articles/:article_id/comments (pagination)", () => {
       });
   });
 });
+
+describe("POST /api/topics", () => {
+  test("POST: 201 inserts a new topic and returns it as a response to the client", () => {
+    const newTopic = {
+      slug: "pancakes",
+      description: "All about pancakes",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then(({ body }) => {
+        console.log(body.topic);
+        expect(body.topic).toMatchObject({
+          slug: "pancakes",
+          description: "All about pancakes",
+        });
+      });
+  });
+  test("POST: 400 sends a correct status and error message when trying to insert a topic(slug) that already exists in the database", () => {
+    const sameTopic = {
+      slug: "mitch",
+      description: "All about mitch",
+    };
+
+    return request(app)
+      .post("/api/topics")
+      .send(sameTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
+  test("POST: 400 sends a correct status and error message when trying to insert a topic with missing slug primary key property", () => {
+    const badTopic = {
+      description: "All about ducks",
+    };
+
+    return request(app)
+      .post("/api/topics")
+      .send(badTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
+});
