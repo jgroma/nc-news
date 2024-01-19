@@ -11,11 +11,13 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles, on default sorted by created_at column in descending order",
-    "queries": ["topic", "sort_by", "order"],
+    "queries": ["topic", "sort_by", "order", "limit", "p"],
     "queries_description": {
       "topic": "filters articles by the given topic",
       "sort-by": "sorts articles by the given column (author, title, article_id, topic, created_at, votes, article_img_url, comment_count)",
-      "order": "order articles in the given order (asc, desc)"
+      "order": "order articles in the given order (asc, desc)",
+      "limit": "(pagination) limits the size of the array, defaults to 10",
+      "p": "specifies at which page to start, defaults to first page"
     },
     "exampleResponse": {
       "articles": [

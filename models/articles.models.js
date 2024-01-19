@@ -21,7 +21,13 @@ exports.fetchArticleById = (article_id) => {
     });
 };
 
-exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
+exports.fetchArticles = (
+  sort_by = "created_at",
+  order = "desc",
+  topic,
+  limit = 10,
+  p = 1
+) => {
   const queryParameters = [];
   const validSortQueries = [
     "author",
@@ -44,6 +50,14 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
     return Promise.reject({ status: 400, message: "Invalid order query" });
   }
 
+  if (!/^[0-9]*$/.test(limit) || limit[0] === "0") {
+    return Promise.reject({ status: 400, message: "Invalid limit query" });
+  }
+
+  if (!/^[0-9]*$/.test(p) || p[0] === "0") {
+    return Promise.reject({ status: 400, message: "Invalid p query" });
+  }
+
   let queryStr = `SELECT articles.article_id, title, topic, articles.author, articles.created_at, articles.votes, article_img_url,CAST(COUNT(comment_id) AS INTEGER) AS comment_count FROM articles 
   LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
@@ -53,7 +67,11 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
   }
 
   queryStr += ` GROUP BY articles.article_id
-  ORDER BY articles.${sort_by} ${order.toUpperCase()};`;
+  ORDER BY articles.${sort_by} ${order.toUpperCase()} LIMIT ${limit}`;
+
+  if (p > 1) {
+    queryStr += ` OFFSET ${(p - 1) * limit};`;
+  }
 
   return db.query(queryStr, queryParameters).then(({ rows }) => {
     return rows;
@@ -126,7 +144,6 @@ exports.insertArticle = (
       [author, title, body, topic, article_img_url]
     )
     .then(({ rows }) => {
-      console.log(rows, "rows before 2nd query");
       const insertedArticle = rows[0];
       const { article_id } = insertedArticle;
 

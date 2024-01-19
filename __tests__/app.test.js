@@ -93,7 +93,7 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBeGreaterThan(0);
         expect(body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -432,7 +432,7 @@ describe("/api/articles (sorting queries)", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toBeSortedBy("created_at", { descending: true });
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBeGreaterThan(0);
       });
   });
   test("GET: 200 responds with an array of article objects sorted by the property given in sort_by query", () => {
@@ -441,7 +441,7 @@ describe("/api/articles (sorting queries)", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toBeSortedBy("title", { descending: true });
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBeGreaterThan(0);
       });
   });
   test("GET: 400 sends a correct status and error message if given invalid sort_by query", () => {
@@ -458,7 +458,7 @@ describe("/api/articles (sorting queries)", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toBeSortedBy("article_id", { descending: true });
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBeGreaterThan(0);
       });
   });
   test("GET: 200 responds with an array of objects ordered in ascending order if given order query=asc", () => {
@@ -467,7 +467,7 @@ describe("/api/articles (sorting queries)", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toBeSortedBy("title", { descending: false });
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBeGreaterThan(0);
       });
   });
   test("GET: 400 sends a correct status and error message when given an invalid order query", () => {
@@ -608,7 +608,6 @@ describe("POST /api/articles", () => {
       .send(newArticle)
       .expect(201)
       .then(({ body }) => {
-        console.log(body, "test body");
         expect(body.article).toMatchObject(newArticle);
         expect(typeof body.article.article_id).toBe("number");
         expect(typeof body.article.created_at).toBe("string");
@@ -629,7 +628,6 @@ describe("POST /api/articles", () => {
       .send(newArticle)
       .expect(201)
       .then(({ body }) => {
-        console.log(body, "test body");
         expect(body.article).toMatchObject(newArticle);
         expect(body.article.article_img_url).toBe(
           "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
@@ -685,6 +683,54 @@ describe("POST /api/articles", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.message).toBe("Topic does not exist");
+      });
+  });
+});
+
+describe("/api/articles(pagination)", () => {
+  test("GET: 200 responds with an array of 10 article objects when limit query not specified", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(10);
+      });
+  });
+  test("GET: 200 responds with an array of article objects of limited by limit query and offset by p query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&limit=3&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        //console.log(body.articles, "art arr");
+        expect(body.articles.length).toBe(3);
+        expect(body.articles[0].article_id).toBe(10);
+        expect(body.articles[1].article_id).toBe(9);
+        expect(body.articles[2].article_id).toBe(8);
+      });
+  });
+  test("GET: 200 responds with total_count property that displays the total number of articles discounting the the limit", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&limit=3")
+      .expect(200)
+      .then(({ body }) => {
+        //console.log(body.articles, "art arr");
+        expect(body.total_count).toBe(12);
+      });
+  });
+  test("GET: 400 sends a correct status and error message when limit query is invalid", () => {
+    return request(app)
+      .get("/api/articles?limit=not-a-limit")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid limit query");
+      });
+  });
+  test("GET: 400 sends a correct status and error message when p query is invalid", () => {
+    return request(app)
+      .get("/api/articles?p=not-a-page")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid p query");
       });
   });
 });
