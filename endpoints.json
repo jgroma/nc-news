@@ -185,5 +185,18 @@
         "comment_count": 0
       }
     }
+  },
+  "POST /api/topics": {
+    "description": "posts a new topic and returns it to the client",
+    "bodyToSend": {
+      "slug": "dog",
+      "description": "All about dogs"
+    },
+    "exampleResponse": {
+      "topic": {
+        "slug": "dog",
+        "description": "All about dogs"
+      }
+    }
   }
 }
