@@ -168,3 +168,41 @@ exports.insertArticle = (
       return rows[0];
     });
 };
+
+exports.removeCommentsByArticleId = (article_id) => {
+  return db
+    .query(
+      `DELETE FROM comments
+    WHERE article_id = $1 RETURNING *;`,
+      [article_id]
+    )
+    .then(({ rows }) => {
+      console.log(rows);
+    });
+};
+
+exports.removeArticleByArticleId = (article_id) => {
+  const deleteCommentsQuery = db.query(
+    `DELETE FROM comments
+  WHERE article_id = $1 RETURNING *;`,
+    [article_id]
+  );
+
+  return Promise.all([deleteCommentsQuery, article_id])
+    .then((response) => {
+      return db.query(
+        `DELETE FROM articles
+    WHERE article_id = $1 RETURNING *;`,
+        [response[1]]
+      );
+    })
+    .then(({ rows }) => {
+      //console.log(rows, "rows in cont");
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          message: "Article does not exist",
+        });
+      }
+    });
+};

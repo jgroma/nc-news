@@ -817,3 +817,43 @@ describe("POST /api/topics", () => {
       });
   });
 });
+
+describe("DELETE /api/articles/:article_id", () => {
+  test("DELETE: 204 deletes an article with given article_id and its respective comments", () => {
+    return request(app).delete("/api/articles/5").expect(204);
+  });
+  test("DELETE 404 sends a correct status and error message given a valid but non-existent article_id", () => {
+    return request(app)
+      .delete("/api/articles/7899")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Article does not exist");
+      });
+  });
+  test("DELETE 400 sends a correct status and error message given an invalid article_id", () => {
+    return request(app)
+      .delete("/api/articles/not-an-article_id")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
+});
+
+// test("DELETE 404 sends a correct status and error message given a valid but non-existent comment_id", () => {
+//   return request(app)
+//     .delete("/api/comments/7899")
+//     .expect(404)
+//     .then(({ body }) => {
+//       expect(body.message).toBe("Comment does not exist");
+//     });
+// });
+// test("DELETE 400 sends a correct status and error message given an invalid comment_id", () => {
+//   return request(app)
+//     .delete("/api/comments/not-a-comment_id")
+//     .expect(400)
+//     .then(({ body }) => {
+//       expect(body.message).toBe("Bad request");
+//     });
+// });
+// });

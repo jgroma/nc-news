@@ -5,6 +5,7 @@ const {
   insertArticleComment,
   updateArticleById,
   insertArticle,
+  removeArticleByArticleId,
 } = require("../models/articles.models");
 const {
   checkArticleExists,
@@ -123,6 +124,17 @@ exports.postArticle = (req, res, next) => {
     .then((response) => {
       const article = response[0];
       res.status(201).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  removeArticleByArticleId(article_id)
+    .then(() => {
+      res.status(204).send();
     })
     .catch((err) => {
       next(err);
