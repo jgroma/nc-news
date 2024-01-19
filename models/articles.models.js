@@ -78,17 +78,25 @@ exports.fetchArticles = (
   });
 };
 
-exports.fetchArticleComments = (article_id) => {
-  return db
-    .query(
-      `SELECT * FROM comments
-  WHERE article_id = $1
-  ORDER BY created_at DESC;`,
-      [article_id]
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+exports.fetchArticleComments = (article_id, limit = 10, p = 1) => {
+  let queryStr = `
+  SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC LIMIT ${limit}`;
+
+  if (!/^[0-9]*$/.test(limit) || limit[0] === "0") {
+    return Promise.reject({ status: 400, message: "Invalid limit query" });
+  }
+
+  if (!/^[0-9]*$/.test(p) || p[0] === "0") {
+    return Promise.reject({ status: 400, message: "Invalid p query" });
+  }
+
+  if (p > 1) {
+    queryStr += ` OFFSET ${(p - 1) * limit};`;
+  }
+
+  return db.query(queryStr, [article_id]).then(({ rows }) => {
+    return rows;
+  });
 };
 
 exports.insertArticleComment = (username, body, article_id) => {

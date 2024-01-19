@@ -701,7 +701,6 @@ describe("/api/articles(pagination)", () => {
       .get("/api/articles?sort_by=article_id&limit=3&p=2")
       .expect(200)
       .then(({ body }) => {
-        //console.log(body.articles, "art arr");
         expect(body.articles.length).toBe(3);
         expect(body.articles[0].article_id).toBe(10);
         expect(body.articles[1].article_id).toBe(9);
@@ -713,8 +712,45 @@ describe("/api/articles(pagination)", () => {
       .get("/api/articles?topic=mitch&limit=3")
       .expect(200)
       .then(({ body }) => {
-        //console.log(body.articles, "art arr");
         expect(body.total_count).toBe(12);
+      });
+  });
+  test("GET: 400 sends a correct status and error message when limit query is invalid", () => {
+    return request(app)
+      .get("/api/articles?limit=not-a-limit")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid limit query");
+      });
+  });
+  test("GET: 400 sends a correct status and error message when p query is invalid", () => {
+    return request(app)
+      .get("/api/articles?p=not-a-page")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid p query");
+      });
+  });
+});
+
+describe("/api/articles/:article_id/comments (pagination)", () => {
+  test("GET: 200 responds with an array of comments for a given article_id,array size defaults to 10 when given no limit query", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(10);
+      });
+  });
+  test("GET: 200 responds with an array of comments limited by limit query and offset by p query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=3&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(3);
+        expect(body.comments[0].comment_id).toBe(13);
+        expect(body.comments[1].comment_id).toBe(7);
+        expect(body.comments[2].comment_id).toBe(8);
       });
   });
   test("GET: 400 sends a correct status and error message when limit query is invalid", () => {
