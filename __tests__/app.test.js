@@ -782,7 +782,6 @@ describe("POST /api/topics", () => {
       .send(newTopic)
       .expect(201)
       .then(({ body }) => {
-        console.log(body.topic);
         expect(body.topic).toMatchObject({
           slug: "pancakes",
           description: "All about pancakes",
@@ -839,21 +838,3 @@ describe("DELETE /api/articles/:article_id", () => {
       });
   });
 });
-
-// test("DELETE 404 sends a correct status and error message given a valid but non-existent comment_id", () => {
-//   return request(app)
-//     .delete("/api/comments/7899")
-//     .expect(404)
-//     .then(({ body }) => {
-//       expect(body.message).toBe("Comment does not exist");
-//     });
-// });
-// test("DELETE 400 sends a correct status and error message given an invalid comment_id", () => {
-//   return request(app)
-//     .delete("/api/comments/not-a-comment_id")
-//     .expect(400)
-//     .then(({ body }) => {
-//       expect(body.message).toBe("Bad request");
-//     });
-// });
-// });
