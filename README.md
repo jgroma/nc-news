@@ -8,7 +8,7 @@ The endpoints.json file shows all available API endpoints. Alternatively, on the
 
 The API is hosted and deployed on Render.
 
-You can find it at https://nc-news-z5u7.onrender.com/
+You can find it at https://nc-news-z5u7.onrender.com/api
 
 #### Running this project locally.
 
