@@ -67,7 +67,7 @@ exports.fetchArticles = (
   }
 
   queryStr += ` GROUP BY articles.article_id
-  ORDER BY articles.${sort_by} ${order.toUpperCase()} LIMIT ${limit}`;
+  ORDER BY ${sort_by} ${order.toUpperCase()} LIMIT ${limit}`;
 
   if (p > 1) {
     queryStr += ` OFFSET ${(p - 1) * limit};`;

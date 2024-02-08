@@ -457,6 +457,7 @@ describe("/api/articles (sorting queries)", () => {
       .get("/api/articles?sort_by=article_id")
       .expect(200)
       .then(({ body }) => {
+        console.log(body.articles);
         expect(body.articles).toBeSortedBy("article_id", { descending: true });
         expect(body.articles.length).toBeGreaterThan(0);
       });
@@ -476,6 +477,17 @@ describe("/api/articles (sorting queries)", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.message).toBe("Invalid order query");
+      });
+  });
+  test("GET: 200 responds with an array of article objects sorted by the property given in sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("comment_count", {
+          descending: true,
+        });
+        expect(body.articles.length).toBeGreaterThan(0);
       });
   });
 });
