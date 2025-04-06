@@ -2,7 +2,7 @@
 
 NC_News is an API that retrieves
 data about dummy articles, topics, comments and users.
-The database used to store this information is PostgreSQL hosted on ElephantSQL.
+The database used to store this information is PostgreSQL hosted on Supabase (edit: previously it was hosted on ElephantSQL which has been discountinued).
 
 The endpoints.json file shows all available API endpoints. Alternatively, on the hosted version, "/api" endpoint will list all the available endpoints and their desciptions.
 
